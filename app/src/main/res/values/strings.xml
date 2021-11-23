@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">GirTago</string>
+    <string name="stateName">TX State</string>
+    <string-array name="txStateListStr">
+        <item>Init</item>
+        <item>Выбор</item>
+        <item>Готов</item>
+        <item>Ошибка</item>
+    </string-array>
+
+    <string name="menu_connect">Connect</string>
+    <string name="menu_disconnect">Disconnect</string>
+    <string name="menu_send">Send</string>
+
+    <string name="state_connected">Connected</string>
+    <string name="state_disconnected">Disconnected</string>
+    <string name="state_OnCconnect">Connect…</string>
+
+
+
+</resources>
