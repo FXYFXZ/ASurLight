@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GirTago</string>
+    <string name="app_name">SurLight</string>
     <string name="stateName">TX State</string>
     <string-array name="txStateListStr">
         <item>Init</item>

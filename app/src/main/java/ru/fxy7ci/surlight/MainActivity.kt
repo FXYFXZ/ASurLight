@@ -1,4 +1,4 @@
-package ru.fxy7ci.girtago
+package ru.fxy7ci.surlight
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -20,7 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import ru.fxy7ci.girtago.BT.StoreVals
+import ru.fxy7ci.surlight.BT.StoreVals
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red

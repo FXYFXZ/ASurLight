@@ -1,4 +1,4 @@
-package ru.fxy7ci.girtago;
+package ru.fxy7ci.surlight;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
@@ -17,7 +17,7 @@ import android.util.Log;
 
 import java.util.List;
 
-import ru.fxy7ci.girtago.BT.StoreVals;
+import ru.fxy7ci.surlight.BT.StoreVals;
 
 /**
  * Service for managing connection and data communication with a GATT server hosted on a

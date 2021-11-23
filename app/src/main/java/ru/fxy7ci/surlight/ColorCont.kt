@@ -1,7 +1,5 @@
-package ru.fxy7ci.girtago
+package ru.fxy7ci.surlight
 import android.graphics.Color
-import android.widget.Button
-import androidx.core.graphics.red
 
 /** Контейнер для работы с лампами
  * =============================== */

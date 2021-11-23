@@ -7,7 +7,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "ru.fxy7ci.girtago"
+        applicationId "ru.fxy7ci.surlight"
         minSdk 24
         targetSdk 31
         versionCode 1

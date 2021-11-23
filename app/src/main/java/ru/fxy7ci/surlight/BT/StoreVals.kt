@@ -1,4 +1,4 @@
-package ru.fxy7ci.girtago.BT
+package ru.fxy7ci.surlight.BT
 
 //TODO работа по сохранению настроек
 

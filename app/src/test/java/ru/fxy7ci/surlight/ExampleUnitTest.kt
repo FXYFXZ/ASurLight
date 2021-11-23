@@ -1,4 +1,4 @@
-package ru.fxy7ci.girtago
+package ru.fxy7ci.surlight
 
 import org.junit.Test
 
