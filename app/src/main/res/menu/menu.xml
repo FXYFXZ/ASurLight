@@ -22,5 +22,11 @@
         android:title="@string/menu_disconnect"
         app:showAsAction="ifRoom|withText" />
 
+    <item
+        android:id="@+id/menu_Found"
+        android:icon="@drawable/ic_char_found"
+        android:orderInCategory="50"
+        android:title="@string/menu_disconnect"
+        app:showAsAction="ifRoom|withText" />
 
 </menu>

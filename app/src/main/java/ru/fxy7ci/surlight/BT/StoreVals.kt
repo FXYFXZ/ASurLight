@@ -1,7 +1,5 @@
 package ru.fxy7ci.surlight.BT
 
-//TODO работа по сохранению настроек
-
 class StoreVals {
 
     companion object {
@@ -15,7 +13,6 @@ class StoreVals {
         const val STATE_CONNECTED = 2
         // характеристика для передачи BLE
         const val BT_MAIN_CHR = "0000ffe1-0000-1000-8000-00805f9b34fb"
-
     }
 
 }

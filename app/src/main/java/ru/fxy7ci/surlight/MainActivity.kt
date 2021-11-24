@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
     private var mBluetoothLeService: BluetoothLeService? = null
     //private val mBluetoothAdapter: BluetoothAdapter? = null
     private var mConnected = false
+    private var charFound = false
 
     private lateinit var fldState : TextView
     private lateinit var fldBTState : TextView
@@ -121,6 +122,8 @@ class MainActivity : AppCompatActivity() {
             menu?.findItem(R.id.menu_disconnect)?.isVisible = isConnected
         }
         menu?.findItem(R.id.menu_btOff)?.isVisible = (myAppState ==AppState.AP_BT_PROBLEM)
+        menu?.findItem(R.id.menu_Found)?.isVisible = charFound
+
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -277,8 +280,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 BluetoothLeService.ACTION_GATT_DISCONNECTED -> {
                     mConnected = false
+                    charFound = false
                     //TODO updateConnectionState(R.string.disconnected)
-                    //invalidateOptionsMenu()
+                    invalidateOptionsMenu()
                 }
                 BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED -> {
                     // Show all the supported services and characteristics on the user interface.
@@ -289,6 +293,10 @@ class MainActivity : AppCompatActivity() {
 //                    //val mBluetoothGattCharacteristic: BluetoothGattCharacteristic? = null
 //                    // тут пришли данные
 //                }
+                BluetoothLeService.FOUND_CHAR_EVRIKA -> {
+                    charFound = true
+                    invalidateOptionsMenu()
+                }
             }
         }
     }
@@ -300,6 +308,7 @@ class MainActivity : AppCompatActivity() {
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED)
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED)
         intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE)
+        intentFilter.addAction(BluetoothLeService.FOUND_CHAR_EVRIKA)
         return intentFilter
     }
 

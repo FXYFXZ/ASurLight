@@ -40,16 +40,17 @@ public class BluetoothLeService extends Service {
 
     // intent strings
     public final static String ACTION_GATT_CONNECTED =
-            "com.example.bluetooth.le.ACTION_GATT_CONNECTED";
+            "ru.fxy7ci.surlight.ACTION_GATT_CONNECTED";
     public final static String ACTION_GATT_DISCONNECTED =
-            "com.example.bluetooth.le.ACTION_GATT_DISCONNECTED";
+            "ru.fxy7ci.surlight.ACTION_GATT_DISCONNECTED";
     public final static String ACTION_GATT_SERVICES_DISCOVERED =
-            "com.example.bluetooth.le.ACTION_GATT_SERVICES_DISCOVERED";
+            "ru.fxy7ci.surlight.ACTION_GATT_SERVICES_DISCOVERED";
     public final static String ACTION_DATA_AVAILABLE =
-            "com.example.bluetooth.le.ACTION_DATA_AVAILABLE";
+            "ru.fxy7ci.surlight.ACTION_DATA_AVAILABLE";
     public final static String EXTRA_DATA =
-            "com.example.bluetooth.le.EXTRA_DATA";
-
+            "ru.fxy7ci.surlight.EXTRA_DATA";
+    public final static String FOUND_CHAR_EVRIKA =
+            "ru.fxy7ci.surlight.EXTRA_DATA";
 
     /**
      * Initializes a reference to the local Bluetooth adapter.
@@ -129,18 +130,16 @@ public class BluetoothLeService extends Service {
         List<BluetoothGattService> gattServices = mBluetoothGatt.getServices();
         if (gattServices==null) return;
         for (BluetoothGattService gattService : gattServices){
-            //Log.d("MyLog", "Service:" + gattService.toString());
-            //типа "android.bluetooth.BluetoothGattService@e81fae4"
+            // Log.d("MyLog", "Service:" + gattService.toString());
+            // типа "android.bluetooth.BluetoothGattService@e81fae4"
             List<BluetoothGattCharacteristic> gattCharacteristics =
                     gattService.getCharacteristics();
 
             for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics){
 //                Log.d("MyLog", "Char:" + gattCharacteristic.getUuid().toString());
-                //TODO правильное сравнение
                 if (gattCharacteristic.getUuid().toString().equals(StoreVals.BT_MAIN_CHR)){
-                    Log.d("MyLog", "FoundChar!!!");
+                    broadcastUpdate(FOUND_CHAR_EVRIKA);
                     btChar = gattCharacteristic;
-                    //TODO индикация
                     return;
                 }
             }
