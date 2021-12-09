@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
     private val hueClick = View.OnClickListener {
 
         val newSat = (it as Button).tag.toString().toFloat()
-        clrCnt.settSaturation(newSat)
+        clrCnt.settValue(newSat)
         btnSlide.setBackgroundColor(clrCnt.getColor())
 //        Log.d("MyLog", "Hue" + it.tag)
     }

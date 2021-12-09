@@ -3,9 +3,14 @@ import android.graphics.Color
 
 /** Контейнер для работы с лампами
  * =============================== */
+enum class HSV_Bytes(val b: Int) {
+    BYTE_HUE(0),
+    BYTE_SUTUR(1),
+    BYTE_VALUE(2)
+}
 
 class ColorCont(myRed: Int, myGreen: Int, myBlue: Int) {
-    private var curHue = SATURATION
+    private var curValue = MAX_VAL
 
     private var hsv = FloatArray(3)
     init {
@@ -26,13 +31,13 @@ class ColorCont(myRed: Int, myGreen: Int, myBlue: Int) {
     }
 
     fun setOff(){
-        hsv[2] = 0f
+        hsv[HSV_Bytes.BYTE_VALUE.ordinal] = 0f
     }
 
 
     // Двигаем цвет
     fun moveHue(myVal: Float){
-        hsv[1] = curHue
+        hsv[2] = curValue
         hsv[0] += myVal
         if (hsv[0] < 0) hsv[0] = 0f
         if (hsv[0] > 360) hsv[0] = MAX_HUE
@@ -40,14 +45,14 @@ class ColorCont(myRed: Int, myGreen: Int, myBlue: Int) {
 
     fun moveValue(myVal: Float){
         if (kotlin.math.abs(myVal) > 1f) return
-        hsv[1] = curHue
-        hsv[2] += myVal
+        hsv[2] = curValue
+        hsv[1] += myVal
         if (hsv[2] < 0) hsv[2] = 0f
         if (hsv[2] > 1) hsv[2] = MAX_VAL
     }
 
-    fun settSaturation (myVal: Float){
-        curHue = myVal
+    fun settValue (myVal: Float){
+        curValue = myVal
     }
 
     companion object {
