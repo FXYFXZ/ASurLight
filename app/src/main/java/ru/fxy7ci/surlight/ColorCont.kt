@@ -7,6 +7,7 @@ import android.graphics.Color
 class ColorCont(myRed: Int = 200, myGreen: Int = 200, myBlue: Int =200) {
     private var curValue = MAX_VAL
     private var hsv = FloatArray(3)
+    var isDirty = false
     init {
         if (myRed in 0..255 && myGreen in 0..255 && myBlue in 0..255) {
             Color.colorToHSV(Color.rgb(myRed,myGreen,myBlue), hsv)
@@ -16,6 +17,7 @@ class ColorCont(myRed: Int = 200, myGreen: Int = 200, myBlue: Int =200) {
     // Ставим значение по умолчанию
     fun setDefault(){
         Color.colorToHSV(Color.rgb(200,200,200), hsv)
+        isDirty = true
     }
 
     fun getColor(): Int{
@@ -24,6 +26,7 @@ class ColorCont(myRed: Int = 200, myGreen: Int = 200, myBlue: Int =200) {
 
     fun setOff(){
         hsv[2] = 0f
+        isDirty = true
     }
 
     // Двигаем цвет
@@ -36,6 +39,7 @@ class ColorCont(myRed: Int = 200, myGreen: Int = 200, myBlue: Int =200) {
         if (cv < 0) cv = 0f
         if (cv > MAX_HUE) cv = MAX_HUE
         hsv[0] = cv
+        isDirty = true
     }
 
     fun moveSaturation(myVal: Float){
@@ -49,12 +53,14 @@ class ColorCont(myRed: Int = 200, myGreen: Int = 200, myBlue: Int =200) {
         if (cv > MAX_VAL) cv = MAX_SAT
 
         hsv[1] = cv
+        isDirty = true
     }
 
     fun settValue (myVal: Float){
         if (myVal > MAX_VAL) return
         curValue = myVal
         hsv[2] = curValue
+        isDirty = true
     }
 
     companion object {

@@ -14,7 +14,6 @@ import android.os.Looper
 import android.util.Log
 import android.view.*
 import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -24,19 +23,15 @@ import ru.fxy7ci.surlight.BT.StoreVals
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
-
+import ru.fxy7ci.surlight.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
     private var myAppState: AppState = AppState.AP_LOAD
     lateinit var clrCnt: ColorCont
     private val btnSlide: Button by lazy {findViewById(R.id.btnSlide)}
     private lateinit var mDetector: GestureDetector
     private val mainHandler = Handler(Looper.getMainLooper())
-    // насыщенность
-    private val btnH1: Button by lazy {findViewById(R.id.btnHue25)}
-    private val btnH2: Button by lazy {findViewById(R.id.btnHue50)}
-    private val btnH3: Button by lazy {findViewById(R.id.btnHue75)}
-    private val btnH4: Button by lazy {findViewById(R.id.btnHue100)}
 
     // все что относится к BT
     private var mBluetoothLeService: BluetoothLeService? = null
@@ -44,30 +39,36 @@ class MainActivity : AppCompatActivity() {
     private var mConnected = false
     private var charFound = false
 
-    private lateinit var fldState : TextView
-    private lateinit var fldBTState : TextView
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        // Интерфейс
-        fldState= findViewById(R.id.fldState)
-        fldBTState= findViewById(R.id.fldBTState)
-
-        // получение всех разрешений
-        getBtPermission()
-
-        val gattServiceIntent = Intent(this, BluetoothLeService::class.java)
-        bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE)
-
-        loopCycle()
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setColorClass()
         btnSlide.setBackgroundColor(clrCnt.getColor())
-
         setGest()
 
+        // BLE settings
+        getBtPermission()
+        val gattServiceIntent = Intent(this, BluetoothLeService::class.java)
+        bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE)
+
+        // насыщенность
+        binding.btnHue25.setOnClickListener (btn14Click)
+        binding.btnHue50.setOnClickListener (btn14Click)
+        binding.btnHue75.setOnClickListener (btn14Click)
+        binding.btnHue100.setOnClickListener (btn14Click)
+    }
+
+    private val btn14Click = View.OnClickListener {
+        val newSat = (it as Button).tag.toString().toFloat()
+        clrCnt.settValue(newSat)
+        btnSlide.setBackgroundColor(clrCnt.getColor())
+    }
+
+
+    override fun onResume() {
+        super.onResume()
         mainHandler.post(object : Runnable {
             override fun run() {
                 loopCycle()
@@ -75,46 +76,18 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        btnH1.setOnClickListener (btn14Click)
-        btnH2.setOnClickListener (btn14Click)
-        btnH3.setOnClickListener (btn14Click)
-        btnH4.setOnClickListener (btn14Click)
-    }
-
-    private val btn14Click = View.OnClickListener {
-        val newSat = (it as Button).tag.toString().toFloat()
-        clrCnt.settValue(newSat)
-        btnSlide.setBackgroundColor(clrCnt.getColor())
-//        Log.d("MyLog", "Hue" + it.tag)
-    }
-
-
-    override fun onResume() {
-        super.onResume()
-        // Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
-        // fire an intent to display a dialog asking the user to grant permission to enable it.
-        // TODO bluetooth enable
-
         // todo поднимаем службу  и коннектимся
-
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter())
-        //
     }
 
     override fun onPause() {
         savePreferences()
-        //todo полный р
-        mainHandler.removeCallbacksAndMessages(null)
-        unregisterReceiver(mGattUpdateReceiver)
-
-
-        super.onPause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
+        //todo полный расконнект
         unbindService(mServiceConnection)
         mBluetoothLeService = null
+        mainHandler.removeCallbacksAndMessages(null)
+        unregisterReceiver(mGattUpdateReceiver)
+        super.onPause()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -166,36 +139,35 @@ class MainActivity : AppCompatActivity() {
     private fun loopCycle(){
 
         when(mBluetoothLeService?.connectionState) {
-            StoreVals.STATE_DISCONNECTED -> fldBTState.text = getString(R.string.state_disconnected)
-            StoreVals.STATE_CONNECTED -> fldBTState.text = getString(R.string.state_connected)
-            StoreVals.STATE_CONNECTING -> fldBTState.text = getString(R.string.state_OnCconnect)
+            StoreVals.STATE_DISCONNECTED -> binding.fldBTState.text = getString(R.string.state_disconnected)
+            StoreVals.STATE_CONNECTED -> binding.fldBTState.text = getString(R.string.state_connected)
+            StoreVals.STATE_CONNECTING -> binding.fldBTState.text = getString(R.string.state_OnCconnect)
         }
 
 //        //TODO учимся работать со структурами
         if (mConnected) {
-            val value = ByteArray(6)
-            val color = clrCnt.getColor()
-            value[0] = 3
-            value[1] = color.green.toByte()
-            value[2] = color.red.toByte()
-            value[3] = color.blue.toByte()
-            value[4] = 0xAB.toByte()
-            value[5] = 0xBA.toByte()
-            mBluetoothLeService!!.sendDataToBLM(value)
+            if (clrCnt.isDirty) {
+                val value = ByteArray(6)
+                val color = clrCnt.getColor()
+                value[0] = 3
+                value[1] = color.green.toByte()
+                value[2] = color.red.toByte()
+                value[3] = color.blue.toByte()
+                value[4] = 0xAB.toByte()
+                value[5] = 0xBA.toByte()
+                mBluetoothLeService!!.sendDataToBLM(value)
+                clrCnt.isDirty = false
+            }
         }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setGest() {
         mDetector =GestureDetector(this, MyGestureListener())
-
-
-            //GestureDetector (MyGestureListener())
         btnSlide.setOnTouchListener { _, event ->
             mDetector.onTouchEvent(event)
         }
     }
-
 
     // Get All permissions
     private fun getBtPermission() {

@@ -62,6 +62,7 @@
 
             <Button
                 android:id="@+id/btnHue25"
+                android:onClick="btn14Click"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
