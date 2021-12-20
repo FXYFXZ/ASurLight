@@ -3,22 +3,14 @@ import android.graphics.Color
 
 /** Контейнер для работы с лампами
  * =============================== */
-enum class HSV_Bytes(val b: Int) {
-    BYTE_HUE(0),
-    BYTE_SUTUR(1),
-    BYTE_VALUE(2)
-}
 
-class ColorCont(myRed: Int, myGreen: Int, myBlue: Int) {
+class ColorCont(myRed: Int = 200, myGreen: Int = 200, myBlue: Int =200) {
     private var curValue = MAX_VAL
-
     private var hsv = FloatArray(3)
     init {
-        setDefault()
-    }
-
-    init {
-        Color.colorToHSV(Color.rgb(myRed,myGreen,myBlue), hsv)
+        if (myRed in 0..255 && myGreen in 0..255 && myBlue in 0..255) {
+            Color.colorToHSV(Color.rgb(myRed,myGreen,myBlue), hsv)
+        }
     }
 
     // Ставим значение по умолчанию
@@ -31,34 +23,43 @@ class ColorCont(myRed: Int, myGreen: Int, myBlue: Int) {
     }
 
     fun setOff(){
-        hsv[HSV_Bytes.BYTE_VALUE.ordinal] = 0f
+        hsv[2] = 0f
     }
-
 
     // Двигаем цвет
     fun moveHue(myVal: Float){
         hsv[2] = curValue
-        hsv[0] += myVal
-        if (hsv[0] < 0) hsv[0] = 0f
-        if (hsv[0] > 360) hsv[0] = MAX_HUE
+        
+        var cv = hsv[0]
+        // 0..360
+        cv += myVal
+        if (cv < 0) cv = 0f
+        if (cv > MAX_HUE) cv = MAX_HUE
+        hsv[0] = cv
     }
 
-    fun moveValue(myVal: Float){
-        if (kotlin.math.abs(myVal) > 1f) return
+    fun moveSaturation(myVal: Float){
+        if (kotlin.math.abs(myVal) > MAX_VAL) return
         hsv[2] = curValue
-        hsv[1] += myVal
-        if (hsv[2] < 0) hsv[2] = 0f
-        if (hsv[2] > 1) hsv[2] = MAX_VAL
+
+        var cv = hsv[1]
+
+        cv += myVal
+        if (cv < 0) cv = 0f
+        if (cv > MAX_VAL) cv = MAX_SAT
+
+        hsv[1] = cv
     }
 
     fun settValue (myVal: Float){
+        if (myVal > MAX_VAL) return
         curValue = myVal
+        hsv[2] = curValue
     }
 
     companion object {
         const val MAX_HUE = 360f
         const val MAX_VAL = 1f
-        const val  SATURATION = 0.25f
+        const val MAX_SAT = 1f
     }
-
 }

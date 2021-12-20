@@ -26,8 +26,6 @@ import androidx.core.graphics.green
 import androidx.core.graphics.red
 
 
-//TODO  добавить сканирование как в master(c уровнями сигналов)
-
 class MainActivity : AppCompatActivity() {
     private var myAppState: AppState = AppState.AP_LOAD
     lateinit var clrCnt: ColorCont
@@ -63,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         val gattServiceIntent = Intent(this, BluetoothLeService::class.java)
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE)
 
-        showTxState()
+        loopCycle()
 
         setColorClass()
         btnSlide.setBackgroundColor(clrCnt.getColor())
@@ -72,19 +70,18 @@ class MainActivity : AppCompatActivity() {
 
         mainHandler.post(object : Runnable {
             override fun run() {
-                showTxState()
+                loopCycle()
                 mainHandler.postDelayed(this, 1000)
             }
         })
 
-        btnH1.setOnClickListener (hueClick)
-        btnH2.setOnClickListener (hueClick)
-        btnH3.setOnClickListener (hueClick)
-        btnH4.setOnClickListener (hueClick)
+        btnH1.setOnClickListener (btn14Click)
+        btnH2.setOnClickListener (btn14Click)
+        btnH3.setOnClickListener (btn14Click)
+        btnH4.setOnClickListener (btn14Click)
     }
 
-    private val hueClick = View.OnClickListener {
-
+    private val btn14Click = View.OnClickListener {
         val newSat = (it as Button).tag.toString().toFloat()
         clrCnt.settValue(newSat)
         btnSlide.setBackgroundColor(clrCnt.getColor())
@@ -97,15 +94,21 @@ class MainActivity : AppCompatActivity() {
         // Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
         // fire an intent to display a dialog asking the user to grant permission to enable it.
         // TODO bluetooth enable
+
+        // todo поднимаем службу  и коннектимся
+
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter())
         //
     }
 
     override fun onPause() {
         savePreferences()
-        super.onPause()
+        //todo полный р
         mainHandler.removeCallbacksAndMessages(null)
         unregisterReceiver(mGattUpdateReceiver)
+
+
+        super.onPause()
     }
 
     override fun onDestroy() {
@@ -160,7 +163,7 @@ class MainActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    private fun showTxState(){
+    private fun loopCycle(){
 
         when(mBluetoothLeService?.connectionState) {
             StoreVals.STATE_DISCONNECTED -> fldBTState.text = getString(R.string.state_disconnected)
@@ -312,7 +315,7 @@ class MainActivity : AppCompatActivity() {
         return intentFilter
     }
 
-
+    //------------------------------------------------------------------------------------ GESTURE
     inner class MyGestureListener : GestureDetector.SimpleOnGestureListener() {
         override fun onDown(event: MotionEvent): Boolean {
             //TODO запускаем отсчет
@@ -341,7 +344,7 @@ class MainActivity : AppCompatActivity() {
             distanceX: Float, distanceY: Float
         ): Boolean {
             clrCnt.moveHue((distanceX * (ColorCont.MAX_HUE/3)  / btnSlide.width)*-1)
-            clrCnt.moveValue(distanceY / btnSlide.width )
+            clrCnt.moveSaturation(distanceY / btnSlide.width )
             btnSlide.setBackgroundColor(clrCnt.getColor())
             return true
         }
@@ -358,14 +361,12 @@ class MainActivity : AppCompatActivity() {
     enum class AppState {
         AP_LOAD,
         AP_BT_PROBLEM,
-        AP_PERMISION,
         AP_DISCONNET,
-        AP_CONNECT
+//        AP_PERMISION,
+//        AP_CONNECT
     }
 
-
-}
-// END CLASS
+} // END CLASS
 
 
 
